@@ -1,0 +1,7 @@
+base   structgroup
+author Szymon Olewniczak
+email  it@rid.pl
+date   2018-07-30
+name   Struct Group
+desc   New struct type - dokuwiki user groups
+url    https://dokuwiki.org/plugin:structgroup
