@@ -10,6 +10,30 @@ class helper_plugin_structgroup_authgroup extends DokuWiki_Plugin {
     protected $groupsloaded = false;
     protected $groups = array();
 
+    protected function loadGroupsFromAcl() {
+        global $AUTH_ACL;
+        if (!isset($AUTH_ACL) || !is_array($AUTH_ACL)) return array();
+
+        $specials = array('ALL');
+        $groups = [];
+        foreach($AUTH_ACL as $line){
+            $line = trim(preg_replace('/#.*$/','',$line)); //ignore comments
+            if(!$line) continue;
+
+            $acl = preg_split('/[ \t]+/',$line);
+            //0 is pagename, 1 is user, 2 is acl
+
+            $grp = rawurldecode($acl[1]);
+            //it's not a group
+            if ($grp[0] != '@') continue;
+            $grp = substr($grp, 1);
+            if(in_array($grp,$specials)) continue;
+            $groups[] = $grp;
+        }
+
+        return array_unique($groups);
+    }
+
     protected function loadGroups() {
         /** @var \DokuWiki_Auth_Plugin $auth */
         global $auth;
@@ -21,6 +45,7 @@ class helper_plugin_structgroup_authgroup extends DokuWiki_Plugin {
 
         $groups = array_map(function($userinfo) { return $userinfo['grps']; }, $auth->retrieveUsers());
         $groups = call_user_func_array('array_merge', $groups);
+        $groups = array_merge($groups, $this->loadGroupsFromAcl());
 
         $this->groups = array_unique($groups);
         $this->groupsloaded = true;
