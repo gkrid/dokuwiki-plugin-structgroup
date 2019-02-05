@@ -19,7 +19,7 @@ class Group extends AbstractMultiBaseType {
 
     /**
      * @param string $rawvalue the user to validate
-     * @return int|string|void
+     * @return int|string
      */
     public function validate($rawvalue) {
         $rawvalue = parent::validate($rawvalue);
@@ -29,7 +29,8 @@ class Group extends AbstractMultiBaseType {
             $authgroup = plugin_load('helper', 'structgroup_authgroup');
 
             if(! in_array($rawvalue, $authgroup->getGroups())) {
-                throw new ValidationException('Group not found', $rawvalue);
+                throw new ValidationException('Group not found: "' . $rawvalue .
+                    '". Available groups: ' . implode(', ', $authgroup->getGroups()));
             }
         }
 
