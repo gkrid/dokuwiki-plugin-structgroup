@@ -44,7 +44,7 @@ class helper_plugin_structgroup_authgroup extends DokuWiki_Plugin {
         }
 
         $groups = array_map(function($userinfo) { return $userinfo['grps']; }, $auth->retrieveUsers());
-        $groups = call_user_func_array('array_merge', $groups);
+        $groups = call_user_func_array('array_merge', array_values($groups));
         $groups = array_merge($groups, $this->loadGroupsFromAcl());
 
         $this->groups = array_unique($groups);
